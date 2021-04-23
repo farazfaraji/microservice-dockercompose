@@ -1,0 +1,35 @@
+version: "3.3"
+services:
+  api-management:
+    container_name: "api-management"
+    image: farazfaraji/microservice-api-part:latest
+    environment:
+      AMQP_URL: 'amqps://gihbqadp:CY5xT0mY6FX_hea-hDcuy4F8cinXn4Nj@clam.rmq.cloudamqp.com/gihbqadp'
+    ports:
+    - "3000:3000"
+
+  feedback-database:
+    container_name: "feedback-database"
+    image: farazfaraji/microservice-feedback-database:latest
+    environment:
+      AMQP_URL: 'amqps://gihbqadp:CY5xT0mY6FX_hea-hDcuy4F8cinXn4Nj@clam.rmq.cloudamqp.com/gihbqadp'
+      POSTGRES: 'postgres://postgres:adminadmin@feedback_postgres:5432/postgres'
+      DB_USERNAME: 'postgres'
+      DB_PASSWORD: 'adminadmin'
+      DB_DATABASE: 'postgres'
+      DB_HOST: 'feedback_postgres'
+    depends_on:
+      - postgres
+
+  postgres:
+    container_name: "feedback_postgres"
+    image: postgres
+    environment:
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'adminadmin'
+      PGDATA: /data/postgres
+    volumes:
+      - ./assets/docker/postgres:/data/postgres
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
